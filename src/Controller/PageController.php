@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class PageController extends AbstractController
 {
@@ -37,6 +38,15 @@ class PageController extends AbstractController
     {
         return $this->render('page/rgpd.html.twig', [
             'controller_name' => 'RGPD',
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/profile', name: 'app_profile', methods: ['GET'])]
+    public function profile(): Response
+    {
+        return $this->render('page/profile.html.twig', [
+            'controller_name' => 'Profile',
         ]);
     }
 }
