@@ -24,7 +24,7 @@ class Category
     /**
      * @var Collection<int, Trip>
      */
-    #[ORM\OneToMany(targetEntity: Trip::class, mappedBy: 'category')]
+    #[ORM\OneToMany(targetEntity: Trip::class, mappedBy: 'category', orphanRemoval: true)]
     private Collection $trips;
 
     public function __construct()
@@ -90,5 +90,4 @@ class Category
 
         return $this;
     }
-
 }

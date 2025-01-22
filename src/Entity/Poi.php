@@ -18,9 +18,9 @@ class Poi
 
     #[ORM\ManyToOne(inversedBy: 'pois')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Localisation $localisation = null;
+    private ?Localisation $location = null;
 
-    #[ORM\OneToOne(inversedBy: 'poi', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Gallery $gallery = null;
 
     public function getId(): ?int
@@ -40,14 +40,14 @@ class Poi
         return $this;
     }
 
-    public function getLocalisation(): ?Localisation
+    public function getLocation(): ?Localisation
     {
-        return $this->localisation;
+        return $this->location;
     }
 
-    public function setLocalisation(?Localisation $localisation): static
+    public function setLocation(?Localisation $location): static
     {
-        $this->localisation = $localisation;
+        $this->location = $location;
 
         return $this;
     }

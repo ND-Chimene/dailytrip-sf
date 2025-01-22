@@ -22,20 +22,20 @@ class Localisation
     #[ORM\Column(length: 255)]
     private ?string $finish = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 3)]
+    #[ORM\Column(type: Types::DECIMAL, precision: 8, scale: 2)]
     private ?string $distance = null;
 
-    #[ORM\Column(type: Types::TIME_MUTABLE)]
-    private ?\DateTimeInterface $duration = null;
-
-    #[ORM\OneToOne(mappedBy: 'localisation', cascade: ['persist', 'remove'])]
-    private ?Trip $trip = null;
+    #[ORM\Column(length: 10)]
+    private ?string $duration = null;
 
     /**
      * @var Collection<int, Poi>
      */
-    #[ORM\OneToMany(targetEntity: Poi::class, mappedBy: 'localisation', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Poi::class, mappedBy: 'location', orphanRemoval: true)]
     private Collection $pois;
+
+    #[ORM\OneToOne(mappedBy: 'localisation', cascade: ['persist', 'remove'])]
+    private ?Trip $trip = null;
 
     public function __construct()
     {
@@ -83,14 +83,44 @@ class Localisation
         return $this;
     }
 
-    public function getDuration(): ?\DateTimeInterface
+    public function getDuration(): ?string
     {
         return $this->duration;
     }
 
-    public function setDuration(\DateTimeInterface $duration): static
+    public function setDuration($duration): static
     {
         $this->duration = $duration;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Poi>
+     */
+    public function getPois(): Collection
+    {
+        return $this->pois;
+    }
+
+    public function addPoi(Poi $poi): static
+    {
+        if (!$this->pois->contains($poi)) {
+            $this->pois->add($poi);
+            $poi->setLocation($this);
+        }
+
+        return $this;
+    }
+
+    public function removePoi(Poi $poi): static
+    {
+        if ($this->pois->removeElement($poi)) {
+            // set the owning side to null (unless already changed)
+            if ($poi->getLocation() === $this) {
+                $poi->setLocation(null);
+            }
+        }
 
         return $this;
     }
@@ -108,36 +138,6 @@ class Localisation
         }
 
         $this->trip = $trip;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Poi>
-     */
-    public function getPois(): Collection
-    {
-        return $this->pois;
-    }
-
-    public function addPoi(Poi $poi): static
-    {
-        if (!$this->pois->contains($poi)) {
-            $this->pois->add($poi);
-            $poi->setLocalisation($this);
-        }
-
-        return $this;
-    }
-
-    public function removePoi(Poi $poi): static
-    {
-        if ($this->pois->removeElement($poi)) {
-            // set the owning side to null (unless already changed)
-            if ($poi->getLocalisation() === $this) {
-                $poi->setLocalisation(null);
-            }
-        }
 
         return $this;
     }

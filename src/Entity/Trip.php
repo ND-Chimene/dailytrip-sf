@@ -32,13 +32,16 @@ class Trip
     private ?string $email = null;
 
     #[ORM\Column]
-    private ?bool $status = null;
+    private ?bool $status = false;
 
     /**
      * @var Collection<int, Rating>
      */
     #[ORM\OneToMany(targetEntity: Rating::class, mappedBy: 'trip', orphanRemoval: true)]
     private Collection $ratings;
+
+    #[ORM\OneToOne(mappedBy: 'trip', cascade: ['persist', 'remove'])]
+    private ?Gallery $gallery = null;
 
     /**
      * @var Collection<int, Review>
@@ -54,9 +57,9 @@ class Trip
     #[ORM\JoinColumn(nullable: false)]
     private ?Localisation $localisation = null;
 
-    #[ORM\OneToOne(inversedBy: 'trip', cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(inversedBy: 'trips')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Gallery $gallery = null;
+    private ?User $author = null;
 
     public function __construct()
     {
@@ -171,6 +174,28 @@ class Trip
         return $this;
     }
 
+    public function getGallery(): ?Gallery
+    {
+        return $this->gallery;
+    }
+
+    public function setGallery(?Gallery $gallery): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($gallery === null && $this->gallery !== null) {
+            $this->gallery->setTrip(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($gallery !== null && $gallery->getTrip() !== $this) {
+            $gallery->setTrip($this);
+        }
+
+        $this->gallery = $gallery;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, Review>
      */
@@ -201,6 +226,18 @@ class Trip
         return $this;
     }
 
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): static
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
     public function getLocalisation(): ?Localisation
     {
         return $this->localisation;
@@ -213,15 +250,16 @@ class Trip
         return $this;
     }
 
-    public function getGallery(): ?Gallery
+    public function getAuthor(): ?User
     {
-        return $this->gallery;
+        return $this->author;
     }
 
-    public function setGallery(Gallery $gallery): static
+    public function setAuthor(?User $author): static
     {
-        $this->gallery = $gallery;
+        $this->author = $author;
 
         return $this;
     }
+
 }
