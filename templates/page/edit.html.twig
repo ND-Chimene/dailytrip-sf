@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	{{ 'Edit'|trans }}
+{% endblock %}
+
+{% block body %}
+
+	<div class="card">
+		<h1 class="card-title">
+			{{'Edit your trip'|trans}}
+		</h1>
+		<div class="card-body">
+			{{form_start(tripForm)}}
+			{{form_end(tripForm)}}
+		</div>
+	</div>
+
+
+{% endblock %}
